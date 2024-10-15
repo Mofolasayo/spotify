@@ -1,9 +1,10 @@
+import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spotify/data/models/auth/create_user_request.dart';
 
 abstract class AuthFirebaseService {
   Future<void> signin();
-  Future<void> signup(CreateUserRequest createUserRequest);
+  Future<Either> signup(CreateUserRequest createUserRequest);
 }
 
 class AuthFirebaseServiceImpl extends AuthFirebaseService {
@@ -14,10 +15,19 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   }
 
   @override
-  Future<void> signup(CreateUserRequest createUseRequest) async {
+  Future<Either> signup(CreateUserRequest createUseRequest) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: createUseRequest.email, password: createUseRequest.password);
-    } catch (e) {}
+      return const Right("Signup was successful");
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+      if (e.code == 'weak-password') {
+        message = 'This password is too weak';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'An account already exist';
+      }
+      return Left(message);
+    }
   }
 }

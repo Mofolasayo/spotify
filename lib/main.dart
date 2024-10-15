@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:spotify/core/theme/app_theme.dart';
+import 'package:spotify/core/config/theme/app_theme.dart';
 import 'package:spotify/firebase_options.dart';
 import 'package:spotify/presentation/intro/blocs/theme_cubit.dart';
 import 'package:spotify/presentation/intro/screens/splash_screen.dart';
