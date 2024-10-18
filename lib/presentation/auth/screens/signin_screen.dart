@@ -6,12 +6,18 @@ import 'package:spotify/common/components/app_textfield.dart';
 import 'package:spotify/common/components/app_textstyle.dart';
 import 'package:spotify/common/components/simple_app_bar.dart';
 import 'package:spotify/common/widgets/app_button.dart';
-import 'package:spotify/core/theme/app_colors.dart';
+import 'package:spotify/core/config/theme/app_colors.dart';
+import 'package:spotify/data/models/auth/signin_user_request.dart';
+import 'package:spotify/domain/usecases/auth/signin.dart';
 import 'package:spotify/presentation/auth/screens/signup_screen.dart';
+import 'package:spotify/presentation/dashboard/pages/home_page.dart';
 import 'package:spotify/presentation/intro/widgets/google_and_apple.dart';
+import 'package:spotify/service_locator.dart';
 
 class SigninScreen extends StatelessWidget {
-  const SigninScreen({super.key});
+  SigninScreen({super.key});
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +67,15 @@ class SigninScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const AppTextField(
+                  AppTextField(
                     hintText: "Enter Username or Email",
                     isPassword: false,
+                    controller: emailController,
                   ),
-                  const AppTextField(
+                  AppTextField(
                     hintText: "Password",
                     isPassword: true,
+                    controller: passwordController,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -79,10 +87,31 @@ class SigninScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                      height: 70,
-                      width: AppDimensions.deviceWidth(context),
-                      child:
-                          AppButton(text: "Create Account", onPressed: () {}))
+                    height: 70,
+                    width: AppDimensions.deviceWidth(context),
+                    child: AppButton(
+                      text: "Sign In",
+                      onPressed: () async {
+                        var result = await sl<SigninuseCase>().call(
+                          params: SigninUserRequest(
+                            email: emailController.text.toString(),
+                            password: passwordController.text.toString(),
+                          ),
+                        );
+                        print("Your email is: ${emailController.text}");
+                        print("Your password is: ${passwordController.text}");
+                        result.fold((l) {
+                          var snackBar = SnackBar(content: Text(l));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }, (r) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (route) => false);
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             ),

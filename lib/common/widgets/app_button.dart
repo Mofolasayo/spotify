@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spotify/common/components/app_dimensions.dart';
 import 'package:spotify/common/components/app_textstyle.dart';
-import 'package:spotify/core/theme/app_colors.dart';
+import 'package:spotify/core/config/theme/app_colors.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({

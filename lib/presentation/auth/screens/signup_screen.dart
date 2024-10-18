@@ -6,13 +6,20 @@ import 'package:spotify/common/components/app_textfield.dart';
 import 'package:spotify/common/components/app_textstyle.dart';
 import 'package:spotify/common/components/simple_app_bar.dart';
 import 'package:spotify/common/widgets/app_button.dart';
-import 'package:spotify/core/theme/app_colors.dart';
+import 'package:spotify/core/config/theme/app_colors.dart';
+import 'package:spotify/data/models/auth/create_user_request.dart';
+import 'package:spotify/domain/usecases/auth/signup.dart';
 import 'package:spotify/presentation/auth/screens/signin_screen.dart';
+import 'package:spotify/presentation/dashboard/pages/home_page.dart';
 import 'package:spotify/presentation/intro/widgets/google_and_apple.dart';
+import 'package:spotify/service_locator.dart';
 
 class SignupScreen extends StatelessWidget {
   SignupScreen({super.key});
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,26 +67,51 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const AppTextField(
+                  AppTextField(
                     hintText: "Full Name",
                     isPassword: false,
+                    controller: fullNameController,
                   ),
-                  const AppTextField(
+                  AppTextField(
                     hintText: "Enter Email",
                     isPassword: false,
+                    controller: emailController,
                   ),
-                  const AppTextField(
+                  AppTextField(
                     hintText: "Password",
                     isPassword: true,
+                    controller: passwordController,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   SizedBox(
-                      height: 70,
-                      width: AppDimensions.deviceWidth(context),
-                      child:
-                          AppButton(text: "Create Account", onPressed: () {}))
+                    height: 70,
+                    width: AppDimensions.deviceWidth(context),
+                    child: AppButton(
+                      text: "Create Account",
+                      onPressed: () async {
+                        var result = await sl<SignupuseCase>().call(
+                          params: CreateUserRequest(
+                            fullName: fullNameController.text.toString(),
+                            email: emailController.text.toString(),
+                            password: passwordController.text.toString(),
+                          ),
+                        );
+                        print("Your email is: ${emailController.text}");
+                        print("Your password is: ${passwordController.text}");
+                        result.fold((l) {
+                          var snackBar = SnackBar(content: Text(l));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }, (r) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (route) => false);
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
@@ -91,7 +123,7 @@ class SignupScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const SigninScreen()));
+                        builder: (context) => SigninScreen()));
                   },
                   child: Text(
                     "Sign in",

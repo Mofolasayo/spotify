@@ -6,8 +6,8 @@ import 'package:spotify/common/components/app_dimensions.dart';
 import 'package:spotify/common/components/app_icons.dart';
 import 'package:spotify/common/components/app_textstyle.dart';
 import 'package:spotify/common/widgets/app_button.dart';
-import 'package:spotify/core/assets/app_images.dart';
-import 'package:spotify/core/theme/app_colors.dart';
+import 'package:spotify/core/config/assets/app_images.dart';
+import 'package:spotify/core/config/theme/app_colors.dart';
 import 'package:spotify/presentation/auth/screens/sigin_or_singnup.dart';
 import 'package:spotify/presentation/intro/blocs/theme_cubit.dart';
 
